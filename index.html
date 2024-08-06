@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tour Pricing App</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Tour Pricing Calculator</title>
 </head>
 <body>
-    <h1>Welcome to the Tour Pricing App</h1>
-    <p>Generate your tour pricing report quickly.</p>
-
-    <!-- Form to input data -->
-    <form id="pricingForm">
-        <input type="text" id="clientName" name="clientName" placeholder="Enter client name" required>
-        <input type="number" id="numAdults" name="numAdults" placeholder="Number of adults" required>
-        <!-- Add more inputs as needed -->
-        <button type="submit">Generate Report</button>
+    <h1>Tour Pricing Calculator</h1>
+    <form id="tourForm">
+        <input type="text" id="clientName" placeholder="Client Name" required>
+        <input type="number" id="airfare" placeholder="Airfare" required>
+        <input type="number" id="numAdults" placeholder="Number of Adults" required>
+        <input type="number" id="numChildren" placeholder="Number of Children" required>
+        <input type="number" id="numNights" placeholder="Number of Nights" required>
+        <input type="number" id="discount" placeholder="Discount (%)">
+        <button type="submit">Calculate and Download PDF</button>
     </form>
 
-    <script src="app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
