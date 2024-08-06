@@ -3,21 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tour Pricing Calculator</title>
+    <title>Tour Pricing App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script>
+        function calculateTotalCost(airfare, numAdults, numChildren, hotelType, numNights, additionalTours, discount, mealUpgrade) {
+            const hotelCosts = {
+                'económico': 40,
+                'turista': 45,
+                'superior turista': 65,
+                'primera clase': 100,
+                'lujo': 330
+            };
+            const tourGuideCostPerDay = 30;
+            const baseMealCost = 9;
+            let numDays = numNights + 1;
+
+            let totalAirfare = airfare > 0 ? (airfare * numAdults + (airfare - 50) * numChildren) : 0;
+            let totalHotelCost = hotelCosts[hotelType] * (numAdults + numChildren) * numNights;
+            let totalTourGuideCost = tourGuideCostPerDay * numDays * (numAdults + numChildren);
+            let totalMealCost = (baseMealCost + mealUpgrade) * 2 * numNights * (numAdults + numChildren);
+            let totalAdditionalTours = additionalTours.reduce((acc, curr) => acc + curr, 0) * (numAdults + numChildren);
+
+            let totalCost = totalAirfare + totalHotelCost + totalTourGuideCost + totalMealCost + totalAdditionalTours;
+            let commission = totalCost * 0.25;
+            let totalWithCommission = totalCost + commission;
+            let discountAmount = totalWithCommission * (discount / 100);
+
+            return (totalWithCommission - discountAmount) / (numAdults + numChildren);
+        }
+
+        function generatePDF(clientName, destination, airfare, numAdults, numChildren, numNights, roomCounts, additionalTours, discount, mealUpgrade, departureDate, returnDate) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const finalCost = calculateTotalCost(airfare, numAdults, numChildren, 'turista', numNights, additionalTours, discount, mealUpgrade);
+
+            doc.text(`Tour Pricing Report for ${clientName}`, 10, 10);
+            doc.text(`Destination: ${destination}`, 10, 20);
+            doc.text(`Total Cost: $${finalCost.toFixed(2)}`, 10, 30);
+            doc.text(`Departure: ${departureDate} - Return: ${returnDate}`, 10, 40);
+
+            doc.save('Tour_Pricing_Report.pdf');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('generateReport').addEventListener('click', function() {
+                const clientName = document.getElementById('clientName').value;
+                const numAdults = parseInt(document.getElementById('numAdults').value, 10);
+                const destination = "Galapagos Isabela"; // Example, add input for destination if needed
+                const airfare = 300; // Example, add input for airfare if needed
+                const numChildren = 2; // Example, add input for number of children if needed
+                const numNights = 5; // Example, add input for number of nights if needed
+                const additionalTours = [50, 100]; // Example, add input for additional tours if needed
+                const discount = 10; // Example, add input for discount if needed
+                const mealUpgrade = 5; // Example, add input for meal upgrade if needed
+                const departureDate = '01/01/2024'; // Example, add input for departure date if needed
+                const returnDate = '01/06/2024'; // Example, add input for return date if needed
+
+                generatePDF(clientName, destination, airfare, numAdults, numChildren, numNights, {}, additionalTours, discount, mealUpgrade, departureDate, returnDate);
+            });
+        });
+    </script>
 </head>
 <body>
-    <h1>Tour Pricing Calculator</h1>
-    <form id="tourForm">
-        <input type="text" id="clientName" placeholder="Client Name" required>
-        <input type="number" id="airfare" placeholder="Airfare" required>
-        <input type="number" id="numAdults" placeholder="Number of Adults" required>
-        <input type="number" id="numChildren" placeholder="Number of Children" required>
-        <input type="number" id="numNights" placeholder="Number of Nights" required>
-        <input type="number" id="discount" placeholder="Discount (%)">
-        <button type="submit">Calculate and Download PDF</button>
-    </form>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
-    <script src="script.js"></script>
+    <h1>Welcome to the Tour Pricing App</h1>
+    <p>Generate your tour pricing report quickly.</p>
+    <input id="clientName" type="text" placeholder="Enter client name" />
+    <input id="numAdults" type="number" placeholder="Number of adults" />
+    <button id="generateReport">Generate Report</button>
 </body>
 </html>
